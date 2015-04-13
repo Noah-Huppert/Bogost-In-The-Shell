@@ -28,43 +28,25 @@ public class Weapon : UnityEngine.Object{
         Vector3 realtiveMousePosition = Input.mousePosition - screenCenter;
 
         //Ammo rotation
-        float realtiveMouseAngle = Mathf.Rad2Deg * Mathf.Atan(realtiveMousePosition.y / realtiveMousePosition.x);
-
-        int mouseAngleQuadrant = 3;
-        if(realtiveMousePosition.x >= 0 && realtiveMousePosition.y >= 0){
-            mouseAngleQuadrant = 1;
-        } else if(realtiveMousePosition.x >= 0 && realtiveMousePosition.y < 0){
-            mouseAngleQuadrant = 4;
-        } else if(realtiveMousePosition.x < 0 && realtiveMousePosition.y >= 0){
-            mouseAngleQuadrant = 2;
-        }
-
-        if(mouseAngleQuadrant == 1 || mouseAngleQuadrant == 4){
-            realtiveMouseAngle = 90 - realtiveMouseAngle;
-        } else if(mouseAngleQuadrant == 2){
-            realtiveMouseAngle = 360 - (90 + realtiveMouseAngle);
-        } else if(mouseAngleQuadrant == 3){
-            realtiveMouseAngle = 270 - realtiveMouseAngle;
-        }
+        float realtiveMouseAngle = Mathf.Rad2Deg * Angle.ClockwiseAtan(realtiveMousePosition.y, realtiveMousePosition.x);
 
         Vector3 worldMouseAngle = new Vector3(0, realtiveMouseAngle, 0);
 
         Vector3 ammoEulerRotation = ammoPrefab.rotation.eulerAngles + worldMouseAngle;
 
-        if(ammoEulerRotation.y >= 360){
-            ammoEulerRotation.y -= 360;
-        }
-
         //Ammo Position
-        float realtiveAmmoPositionX = CharacterFireBufferDistance * Mathf.Cos(realtiveMouseAngle);
-        float realtiveAmmoPositionZ = CharacterFireBufferDistance * Mathf.Sin(realtiveMouseAngle);
+        float realtiveAmmoPositionZ = CharacterFireBufferDistance * Mathf.Cos(Mathf.Deg2Rad * realtiveMouseAngle);
+        float realtiveAmmoPositionX = CharacterFireBufferDistance * Mathf.Sin(Mathf.Deg2Rad * realtiveMouseAngle);
         Vector3 realtiveAmmoPosition = new Vector3(realtiveAmmoPositionX, 0, realtiveAmmoPositionZ);
 
         Vector3 worldAmmoPosition = character.position + realtiveAmmoPosition;
 
         //Spawn ammo
-        Debug.Log(ammoEulerRotation);
-        Instantiate(ammoPrefab, worldAmmoPosition, Quaternion.Euler(ammoEulerRotation));
+        Transform ammoClone = Instantiate(ammoPrefab, worldAmmoPosition, Quaternion.Euler(ammoEulerRotation)) as Transform;
+        float velocityYRatio = CharacterFireBufferDistance / realtiveMousePosition.y;
+        float velocityXRatio = CharacterFireBufferDistance / realtiveMousePosition.x;
+
+        Vector3 globalAmmoVeolcity = character.TransformDirection(new Vector3(speed, 0, 0));
     }
 }
 

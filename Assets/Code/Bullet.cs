@@ -9,8 +9,8 @@ public class Bullet : MonoBehaviour {
 
         Quaternion bulletHitExplosionRotation = Quaternion.AngleAxis(explosionRotation, new Vector3(1, 0, 0));
 
-        //Instantiate(bulletHitExplosion, transform.position, bulletHitExplosionRotation);
+        Instantiate(bulletHitExplosion, transform.position, bulletHitExplosionRotation);
 
-        //Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 }
